@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="GBK" ?>
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	threshold="debug">
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%t] [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="CONSOLEX" class="com.handpay.arch.log4jx.appender.ConsoleAppenderX">
+		<param name="repeatLimit" value="300" />
+		<param name="repeatInterval" value="0" />
+		<param name="standardLevel" value="ERROR" />
+		<param name="lruMapMaxSize" value="200" />
+		<param name="target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%t] [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="FILEX" class="com.handpay.arch.log4jx.appender.DailyRollingFileAppenderX">
+		<!-- repeatLimit表示重复日志数量，一旦达到该值立即输出，0表示禁用此功能(条件可选) -->
+		<param name="repeatLimit" value="500" />
+		<!-- repeatInterval表示定时输出重复日志的时间间隔，0表示禁用此功能(条件可选) -->
+		<param name="repeatInterval" value="0" />
+		<!-- 建议repeatLimit与repeatInterval两者必须选一，尽量不共用 -->
+		<!-- standardLevel表示日志筛选级别，大于等于该值(可选) -->
+		<param name="standardLevel" value="ERROR" />
+		<!-- lruMapMaxSize表示日志防刷缓存收集器容量大小(可选) -->
+		<param name="lruMapMaxSize" value="200" />
+		<param name="File" value="E:/log4j_test_debug.log" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%t] [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="CONSOLEX" />
+		<appender-ref ref="FILEX" />
+	</root>
+</log4j:configuration>
