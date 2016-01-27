@@ -16,6 +16,8 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import com.handpay.arch.log4jx.LogOutputTask;
 import com.handpay.arch.log4jx.LogValue;
+import com.handpay.arch.log4jx.key.DefaultRepeatLogKey;
+import com.handpay.arch.log4jx.key.RepeatLogKey;
 
 /**
  * 防刷恶意重复日志类。<p>
@@ -37,11 +39,22 @@ public class RepeatKillerAppender extends WriterAppender {
 	
 	private int lruMapMaxSize = 150;
 	private Map<String, LogValue> logMap = Collections.synchronizedMap(new LRUMap(getLruMapMaxSize()));
+	
+	private RepeatLogKey repeatLogKey = new DefaultRepeatLogKey();
+	private String keyType;
+	private String seperator;
+	private int stackDepth;
 
 	public RepeatKillerAppender() {
 		super();
 	}
 	
+	@Override
+	public void activateOptions() {
+		super.activateOptions();
+		repeatLogKey = new DefaultRepeatLogKey(getKeyType(),getSeperator(),getStackDepth());
+	}
+
 	@Override
 	public synchronized void setWriter(Writer writer) {
 		super.setWriter(writer);
@@ -66,9 +79,9 @@ public class RepeatKillerAppender extends WriterAppender {
 		//判断相同日志的条件：日志内容+异常堆栈
 		String[] errStrArr = event.getThrowableStrRep();
 		
-		String key = event.getMessage().toString();//FIXME 目前判断相同日志的条件：日志内容
-		
 		if(event.getLevel().isGreaterOrEqual(standardLevel) && errStrArr != null){//超过指定级别   & 形如log(msg,exception)
+			//String key = event.getMessage().toString();//FIXME 目前判断相同日志的条件：日志内容
+			String key = repeatLogKey.build(event);
 			if(logMap.containsKey(key)){
 				LogValue val = logMap.get(key);
 				val.setDisplayTimes(val.getDisplayTimes()+1);
@@ -156,5 +169,37 @@ public class RepeatKillerAppender extends WriterAppender {
 
 	public void setRepeatInterval(long repeatInterval) {
 		this.repeatInterval = repeatInterval;
+	}
+
+	public RepeatLogKey getRepeatLogKey() {
+		return repeatLogKey;
+	}
+
+	public void setRepeatLogKey(RepeatLogKey repeatLogKey) {
+		this.repeatLogKey = repeatLogKey;
+	}
+
+	public String getKeyType() {
+		return keyType;
+	}
+
+	public void setKeyType(String keyType) {
+		this.keyType = keyType;
+	}
+
+	public String getSeperator() {
+		return seperator;
+	}
+
+	public void setSeperator(String seperator) {
+		this.seperator = seperator;
+	}
+
+	public int getStackDepth() {
+		return stackDepth;
+	}
+
+	public void setStackDepth(int stackDepth) {
+		this.stackDepth = stackDepth;
 	}
 }
