@@ -13,6 +13,9 @@
 	</appender>
 
 	<appender name="CONSOLEX" class="com.handpay.arch.log4jx.appender.ConsoleAppenderX">
+		<param name="keyType" value="errorStack" />
+		<param name="seperator" value="_" />
+		<param name="stackDepth" value="1" />
 		<param name="repeatLimit" value="300" />
 		<param name="repeatInterval" value="0" />
 		<param name="standardLevel" value="ERROR" />
